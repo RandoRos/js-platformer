@@ -54,8 +54,11 @@ platformCollisions2D.forEach((row, y) => {
 const gravity = 0.5
 
 const player = new Player({
-  x: 0,
-  y: 0,
+  position: {
+    x: 100,
+    y: 0,
+  },
+  collisionBlocks,
 })
 
 const keys = {
@@ -90,13 +93,14 @@ function animate() {
   platformCollisionBlocks.forEach((block) => {
     block.update()
   })
-  c.restore()
 
   player.update()
 
   player.velocity.x = 0
   if (keys.d.pressed) player.velocity.x = 4
   else if (keys.a.pressed) player.velocity.x = -4
+
+  c.restore()
 }
 
 animate()
@@ -113,7 +117,7 @@ window.addEventListener('keydown', (event) => {
       break;
     case 'w':
     case 'ArrowUp':
-      player.velocity.y = -15
+      player.velocity.y = -8
       break;
   }
 })
