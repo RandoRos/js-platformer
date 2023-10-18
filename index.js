@@ -61,6 +61,48 @@ const player = new Player({
   collisionBlocks,
   imageSrc: './img/warrior/Idle.png',
   frameRate: 8,
+  animations: {
+    Idle: {
+      imageSrc: './img/warrior/Idle.png',
+      frameRate: 8,
+      frameBuffer: 3,
+    },
+    IdleLeft: {
+      imageSrc: './img/warrior/IdleLeft.png',
+      frameRate: 8,
+      frameBuffer: 3,
+    },
+    Run: {
+      imageSrc: './img/warrior/Run.png',
+      frameRate: 8,
+      frameBuffer: 5,
+    },
+    RunLeft: {
+      imageSrc: './img/warrior/RunLeft.png',
+      frameRate: 8,
+      frameBuffer: 5,
+    },
+    Jump: {
+      imageSrc: './img/warrior/Jump.png',
+      frameRate: 2,
+      frameBuffer: 3,
+    },
+    JumpLeft: {
+      imageSrc: './img/warrior/JumpLeft.png',
+      frameRate: 2,
+      frameBuffer: 3,
+    },
+    Fall: {
+      imageSrc: './img/warrior/Fall.png',
+      frameRate: 2,
+      frameBuffer: 3,
+    },
+    FallLeft: {
+      imageSrc: './img/warrior/FallLeft.png',
+      frameRate: 2,
+      frameBuffer: 3,
+    },
+  },
 })
 
 const keys = {
@@ -80,8 +122,8 @@ const background = new Sprite({
   imageSrc: './img/background.png',
 })
 
-function animate() {
-  window.requestAnimationFrame(animate)
+function gameLoop() {
+  window.requestAnimationFrame(gameLoop)
   c.fillStyle = 'white'
   c.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -99,13 +141,40 @@ function animate() {
   player.update()
 
   player.velocity.x = 0
-  if (keys.d.pressed) player.velocity.x = 4
-  else if (keys.a.pressed) player.velocity.x = -4
+  if (keys.d.pressed) {
+    player.switchSprite('Run')
+    player.velocity.x = 2
+    player.lastDirection = 'right'
+  } else if (keys.a.pressed) {
+    player.switchSprite('RunLeft')
+    player.velocity.x = -2
+    player.lastDirection = 'left'
+  } else if (player.velocity.y === 0) {
+    if (player.lastDirection === 'right') {
+      player.switchSprite('Idle')
+    } else {
+      player.switchSprite('IdleLeft')
+    }
+  }
+
+  if (player.velocity.y < 0) {
+    if (player.lastDirection === 'right') {
+      player.switchSprite('Jump')
+    } else {
+      player.switchSprite('JumpLeft')
+    }
+  } else if (player.velocity.y > 0) {
+    if (player.lastDirection === 'right') {
+      player.switchSprite('Fall')
+    } else {
+      player.switchSprite('FallLeft')
+    }
+  }
 
   c.restore()
 }
 
-animate()
+gameLoop()
 
 window.addEventListener('keydown', (event) => {
   switch (event.key) {
