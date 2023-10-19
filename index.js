@@ -44,14 +44,15 @@ platformCollisions2D.forEach((row, y) => {
           position: {
             x: x * 16,
             y: y * 16,
-          }
+          },
+          height: 4,
         })
       )
     }
   })
 })
 
-const gravity = 0.5
+const gravity = 0.1
 
 const player = new Player({
   position: {
@@ -123,6 +124,13 @@ const background = new Sprite({
   imageSrc: './img/background.png',
 })
 
+const camera = {
+  position: {
+    x: 0,
+    y: 0,
+  }
+}
+
 function gameLoop() {
   window.requestAnimationFrame(gameLoop)
   c.fillStyle = 'white'
@@ -146,11 +154,13 @@ function gameLoop() {
     player.switchSprite('Run')
     player.velocity.x = 2
     player.lastDirection = 'right'
+    player.shouldPanCameraToTheLeft()
   } else if (keys.a.pressed) {
     player.switchSprite('RunLeft')
     player.velocity.x = -2
     player.lastDirection = 'left'
   } else if (player.velocity.y === 0) {
+    player.isJumping = false
     if (player.lastDirection === 'right') {
       player.switchSprite('Idle')
     } else {
@@ -159,11 +169,11 @@ function gameLoop() {
   }
 
   if (player.velocity.y < 0) {
-    if (player.lastDirection === 'right') {
-      player.switchSprite('Jump')
-    } else {
-      player.switchSprite('JumpLeft')
-    }
+      if (player.lastDirection === 'right') {
+        player.switchSprite('Jump')
+      } else {
+        player.switchSprite('JumpLeft')
+      }
   } else if (player.velocity.y > 0) {
     if (player.lastDirection === 'right') {
       player.switchSprite('Fall')
@@ -189,7 +199,7 @@ window.addEventListener('keydown', (event) => {
       break;
     case 'w':
     case 'ArrowUp':
-      player.velocity.y = -8
+      player.velocity.y = -3
       break;
   }
 })

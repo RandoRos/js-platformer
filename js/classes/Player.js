@@ -28,12 +28,22 @@ class Player extends Sprite {
 
     this.animations = animations
     this.lastDirection = 'right'
+    this.isJumping = false;
 
     for (let key in this.animations) {
       const image = new Image()
       image.src = this.animations[key].imageSrc
 
       this.animations[key].image = image
+    }
+
+    this.camerabox = {
+      position: {
+        x: this.position.x,
+        y: this.position.y,
+      },
+      width: 200,
+      height: 80,
     }
   }
 
@@ -51,11 +61,24 @@ class Player extends Sprite {
     this.frameRate = this.animations[key].frameRate
   }
 
+  shouldPanCameraToTheLeft() {
+    const cameraboxRightSide = this.camerabox.position.x + this.camerabox.width
+
+    if (cameraboxRightSide >= canvas.width / 4) {
+      console.log('translate to the left')
+    }
+  }
+
   update() {
     this.updateFrames()
     this.updateHitbox()
 
+    this.updateCamerabox();
     // *** DEBUG ***
+
+    c.fillStyle = 'rgba(0, 0, 255, 0.2)'
+    c.fillRect(this.camerabox.position.x, this.camerabox.position.y, this.camerabox.width, this.camerabox.height)
+
     // draws out the image
     // c.fillStyle = 'rgba(0, 255, 0, 0.2)'
     // c.fillRect(this.position.x, this.position.y, this.width, this.height)
@@ -70,6 +93,17 @@ class Player extends Sprite {
     this.applyGravity()
     this.updateHitbox()
     this.checkForVerticalCollisions()
+  }
+
+  updateCamerabox() {
+    this.camerabox = {
+      position: {
+        x: this.position.x - 50,
+        y: this.position.y,
+      },
+      width: 200,
+      height: 80,
+    }
   }
 
   updateHitbox() {
@@ -170,14 +204,14 @@ class Player extends Sprite {
           break;
         }
 
-        if (this.velocity.y < 0) {
-          this.velocity.y = 0
+        // if (this.velocity.y < 0) {
+        //   this.velocity.y = 0
 
-          const offset = this.hitbox.position.y - this.position.y
+        //   const offset = this.hitbox.position.y - this.position.y
 
-          this.position.y = platformCollisionBlocks.position.y + platformCollisionBlocks.height - offset + 0.01
-          break;
-        }
+        //   this.position.y = platformCollisionBlocks.position.y + platformCollisionBlocks.height - offset + 0.01
+        //   break;
+        // }
       }
     }
   }
