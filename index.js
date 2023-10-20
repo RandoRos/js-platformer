@@ -138,7 +138,7 @@ function gameLoop() {
 
   c.save()
   c.scale(4, 4)
-  c.translate(0, -background.image.height + scaledCanvas.height)
+  c.translate(camera.position.x, -background.image.height + scaledCanvas.height)
   background.update()
   collisionBlocks.forEach((collisionBlock) => {
     collisionBlock.update()
@@ -147,6 +147,7 @@ function gameLoop() {
     block.update()
   })
 
+  player.checkForHorizontalCanvasCollision()
   player.update()
 
   player.velocity.x = 0
@@ -154,11 +155,12 @@ function gameLoop() {
     player.switchSprite('Run')
     player.velocity.x = 2
     player.lastDirection = 'right'
-    player.shouldPanCameraToTheLeft()
+    player.shouldPanCameraToTheLeft({ canvas, camera })
   } else if (keys.a.pressed) {
     player.switchSprite('RunLeft')
     player.velocity.x = -2
     player.lastDirection = 'left'
+    player.shouldPanCameraToTheRight({ canvas, camera })
   } else if (player.velocity.y === 0) {
     player.isJumping = false
     if (player.lastDirection === 'right') {
